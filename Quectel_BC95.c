@@ -364,6 +364,9 @@ int Quectel_BC95_recv_data(unsigned char *remote_addr, unsigned char *data, unsi
     {
         sprintf(recv_cmd, "AT+NSORF=%s\r\n", s_device->received_data_info);    
 
+        //即时清空，避免在新的中断产生时候清空造成消息遗漏的问题
+        memset(s_device->received_data_info, 0, 8);
+		
         if(QUECTEL_RESPONSE_CMD_OK == Quectel_BC95_send_cmd(recv_cmd, 5000, &response))
         {
             if(response)
@@ -382,7 +385,6 @@ int Quectel_BC95_recv_data(unsigned char *remote_addr, unsigned char *data, unsi
                 recv_len = StrToHex(data, tmp1);
             }
         }
-        memset(s_device->received_data_info, 0, 8);
     }
 
     return recv_len;
